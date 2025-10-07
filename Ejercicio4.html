@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <h1>Análisis de Ventas - Boutique María</h1>
+    <p>Ingrese las ventas diarias de los 15 días (en USD):</p>
+    <div id="inputs"></div>
+    <button onclick="analyzeSales()">Analizar Ventas</button>
+    <div id="result"></div>
+
+    <script>
+        const inputsContainer = document.getElementById('inputs');
+        for (let i = 1; i <= 15; i++) {
+            inputsContainer.innerHTML += `<label>Día ${i}: <input type="number" id="day${i}" min="0" required></label><br>`;
+        }
+
+        function analyzeSales() {
+            let sales = [];
+            
+            for (let i = 1; i <= 15; i++) {
+                let sale = parseFloat(document.getElementById(`day${i}`).value);
+                if (isNaN(sale) || sale < 0) {
+                    alert(`Por favor, ingrese un valor válido para el Día ${i}`);
+                    return;
+                }
+                sales.push(sale);
+            }
+
+            let maxSale = sales[0];
+            let minSale = sales[0];
+            let maxDay = 1;
+            let minDay = 1;
+
+            for (let i = 1; i < sales.length; i++) {
+                if (sales[i] > maxSale) {
+                    maxSale = sales[i];
+                    maxDay = i + 1;
+                }
+                if (sales[i] < minSale) {
+                    minSale = sales[i];
+                    minDay = i + 1;
+                }
+            }
+
+            document.getElementById('result').innerHTML = `
+                <h3>Resultados</h3>
+                <p>Mayor venta: $${maxSale} en el día ${maxDay}</p>
+                <p>Menor venta: $${minSale} en el día ${minDay}</p>
+            `;
+        }
+    </script>
+</body>
+</html>

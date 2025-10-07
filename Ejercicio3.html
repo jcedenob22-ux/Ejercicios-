@@ -1,0 +1,47 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro de Temperaturas Semanales</title>
+</head>
+<body>
+  <h1>Registro de Temperaturas en Manta</h1>
+
+  <script>
+    let temperaturas = [];
+    let suma = 0;
+
+    // Ingresar las temperaturas de los 7 días
+    for (let i = 0; i < 7; i++) {
+      let temp = parseFloat(prompt("Ingrese la temperatura del día " + (i + 1) + ":"));
+      temperaturas.push(temp);
+      suma += temp;
+    }
+
+    // Calcular promedio
+    let promedio = suma / temperaturas.length;
+
+    // Mostrar resumen
+    document.write("<h2>Resultados de la Semana</h2>");
+    document.write("<p><b>Temperaturas registradas:</b> " + temperaturas.join(", ") + "</p>");
+    document.write("<p><b>Temperatura promedio de la semana:</b> " + promedio.toFixed(2) + " °C</p>");
+
+    
+    document.write("<h3>Detalle por día</h3>");
+    document.write("<table border='1' cellpadding='8' cellspacing='0'>");
+    document.write("<tr><th>Día</th><th>Temperatura (°C)</th><th>¿Superó el promedio?</th></tr>");
+
+    for (let i = 0; i < temperaturas.length; i++) {
+      let supera = (temperaturas[i] > promedio) ? "Sí" : "No";
+      document.write("<tr>");
+      document.write("<td>Día " + (i + 1) + "</td>");
+      document.write("<td>" + temperaturas[i] + "</td>");
+      document.write("<td>" + supera + "</td>");
+      document.write("</tr>");
+    }
+
+    document.write("</table>");
+  </script>
+</body>
+</html>

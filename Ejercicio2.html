@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Ejercicio 2: Promedio de Calificaciones</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      margin-top: 15px;
+      width: 60%;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #ddd;
+    }
+    .aprobado {
+      background-color: #c8e6c9; /* verde suave */
+    }
+    .reprobado {
+      background-color: #ffcdd2; /* rojo suave */
+    }
+  </style>
+</head>
+<body>
+  <h2>Ejercicio 2: Promedio de calificaciones en la universidad</h2>
+
+  <button onclick="calcularPromedio()">Calcular Promedio</button>
+
+  <div id="resultado" style="margin-top: 20px; font-weight: bold;"></div>
+  <div id="tabla"></div>
+
+  <script>
+    function calcularPromedio() {
+      const notas = [];   // Vector donde se guardan las notas
+      let suma = 0;
+      let aprobados = 0;
+      let reprobados = 0;
+
+      // Ingreso de notas usando bucle PARA (for)
+      for (let i = 0; i < 12; i++) {
+        let nota = parseFloat(prompt("Ingrese la nota del estudiante " + (i + 1) + ":"));
+
+        // Validar nota
+        while (isNaN(nota) || nota < 0 || nota > 10) {
+          nota = parseFloat(prompt("❌ Nota inválida. Ingrese una nota válida (0 a 10) para el estudiante " + (i + 1) + ":"));
+        }
+
+        notas[i] = nota;   // Guardar en el vector
+      }
+
+      // Recorrer el vector para calcular promedio y contar aprobados/reprobados
+      for (let i = 0; i < notas.length; i++) {
+        suma += notas[i];
+        if (notas[i] >= 7) {
+          aprobados++;
+        } else {
+          reprobados++;
+        }
+      }
+
+      const promedio = suma / notas.length;
+
+      // Mostrar resumen
+      document.getElementById("resultado").innerHTML =
+        "<p>Notas ingresadas: " + notas.join(", ") + "</p>" +
+        "<p>Promedio general: " + promedio.toFixed(2) + "</p>" +
+        "<p>Estudiantes aprobados: " + aprobados + "</p>" +
+        "<p>Estudiantes reprobados: " + reprobados + "</p>";
+
+      
+      let tabla = "<table><tr><th>Estudiante</th><th>Nota</th><th>Resultado</th></tr>";
+
+      for (let i = 0; i < notas.length; i++) {
+        let estado = notas[i] >= 7 ? "Aprobado" : "Reprobado";
+        let clase = notas[i] >= 7 ? "aprobado" : "reprobado";
+
+        tabla += "<tr class='" + clase + "'><td>" + (i + 1) + "</td><td>" + notas[i] + "</td><td>" + estado + "</td></tr>";
+      }
+
+      tabla += "</table>";
+
+      document.getElementById("tabla").innerHTML = tabla;
+    }
+  </script>
+</body>
+</html>

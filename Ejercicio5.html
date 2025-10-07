@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Consulta de Saldos – Banco “Mi Futuro”</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background: #f4f7fa;
+      color: #333;
+    }
+    h1 {
+      color: #005d9f;
+    }
+    label, input, button {
+      font-size: 1rem;
+    }
+    input {
+      padding: 6px;
+      width: 180px;
+      margin-right: 8px;
+    }
+    button {
+      padding: 6px 14px;
+      background: #005d9f;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #004070;
+    }
+    #resultado {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    .ok {
+      color: #008000;
+    }
+    .error {
+      color: #d8000c;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Consulta de Saldos – Banco “Mi Futuro”</h1>
+
+  <label for="cuenta">Número de cuenta (0-9):</label>
+  <input id="cuenta" type="number" min="0" max="9" placeholder="Ej: 3">
+  <button onclick="consultar()">Consultar saldo</button>
+
+  <p id="resultado"></p>
+
+  <script>
+    // 1. Vector con los saldos de 10 clientes
+    const saldos = [1200.50, 850.75, 3400.00, 210.25, 5000.00,
+                    99.99, 725.40, 1500.00, 432.10, 3100.55];
+
+    function consultar() {
+      const input = document.getElementById('cuenta');
+      const resultado = document.getElementById('resultado');
+      const n = Number(input.value);
+
+      // Validar rango
+      if (!Number.isInteger(n) || n < 0 || n > 9) {
+        resultado.className = 'error';
+        resultado.textContent = 'Error: debe ingresar un número de cuenta entre 0 y 9.';
+        return;
+      }
+
+      // Mostrar saldo
+      resultado.className = 'ok';
+      resultado.textContent = `El saldo de la cuenta ${n} es: $${saldos[n].toFixed(2)}`;
+    }
+  </script>
+
+</body>
+</html>
