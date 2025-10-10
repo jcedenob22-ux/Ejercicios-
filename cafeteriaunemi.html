@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestor de Pedidos – Cafetería UNEMI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #e0b9d1bf; }
+        .product-card { cursor: pointer; transition: transform .15s; }
+        .product-card:hover { transform: scale(1.03); }
+        .badge-cant { font-size: 0.75rem; }
+    </style>
+</head>
+<body>
+    <div class="container py-4">
+        <h1 class="mb-4 text-center">☕ Cafetería UNEMI – Gestión de Pedidos</h1>
+
+        <!-- LISTA DE PRODUCTOS -->
+        <h5 class="text-secondary">1. Seleccione los productos:</h5>
+        <div id="menu" class="row g-3 mb-4"></div>
+
+        <!-- BOTONES DE ACCIÓN -->
+        <div class="d-flex gap-2 mb-3">
+            <button id="btnCalcular" class="btn btn-success">Calcular total</button>
+            <button id="btnLimpiar" class="btn btn-outline-danger">Limpiar pedido</button>
+        </div>
+
+        <!-- RESUMEN DEL PEDIDO -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white">Resumen del pedido</div>
+            <div class="card-body">
+                <ul id="listaPedido" class="list-group mb-3"></ul>
+                <p class="mb-1"><strong>Total de productos:</strong> <span id="totalProductos">0</span></p>
+                <p class="mb-1"><strong>Total a pagar:</strong> $<span id="totalPagar">0</span></p>
+                <p class="mb-0"><strong>Producto más pedido:</strong> <span id="productoTop">-</span></p>
+            </div>
+        </div>
+    </div>
+
+<script>
+/* ==========  DATOS DEL NEGOCIO  ========== */
+const productos = [
+    { nombre: "Café americano", precio: 2 },
+    { nombre: "Cappuccino",     precio: 3 },
+    { nombre: "Sánduche de pollo", precio: 4 },
+    { nombre: "Cheesecake",     precio: 3.5 },
+    { nombre: "Jugo natural",   precio: 1.5 }
+];
+
+/* ==========  VECTORES GLOBALES  ========== */
+let pedidos = [];
+
+/* ==========  FUNCIONES AUXILIARES  ========== */
+function $(id) { return document.getElementById(id); }
+
+function renderMenu() {
+    const cont = $('menu');
+    cont.innerHTML = '';
+    productos.forEach(p => {
+        cont.innerHTML += `
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="card product-card h-100" onclick="agregarProducto('${p.nombre}', ${p.precio})">
+                <div class="card-body text-center">
+                    <h6 class="card-title">${p.nombre}</h6>
+                    <p class="text-muted mb-0">$${p.precio}</p>
+                </div>
+            </div>
+        </div>`;
+    });
+}
+
+function agregarProducto(nombre, precio) {
+    pedidos.push({ nombre, precio });
+    // Solo mostramos la lista cruda, SIN calcular totales
+    const lista = $('listaPedido');
+    lista.innerHTML += `<li class="list-group-item d-flex justify-content-between">
+        <span>${nombre}</span>
+        <span class="badge bg-primary badge-cant">$${precio}</span>
+    </li>`;
+}
+
+function calcularTotales() {
+    // Cálculos con FOR
+    let totalPrecio = 0;
+    for (let i = 0; i < pedidos.length; i++) {
+        totalPrecio += pedidos[i].precio;
+    }
+
+    const frecuencia = {};
+    for (let i = 0; i < pedidos.length; i++) {
+        const nom = pedidos[i].nombre;
+        frecuencia[nom] = (frecuencia[nom] || 0) + 1;
+    }
+    let max = 0, topProd = '-';
+    for (const key in frecuencia) {
+        if (frecuencia[key] > max) {
+            max = frecuencia[key];
+            topProd = key;
+        }
+    }
+
+    $('totalProductos').textContent = pedidos.length;
+    $('totalPagar').textContent = totalPrecio.toFixed(2);
+    $('productoTop').textContent = topProd;
+}
+
+function limpiarPedido() {
+    pedidos = [];
+    $('listaPedido').innerHTML = '';
+    $('totalProductos').textContent = '0';
+    $('totalPagar').textContent = '0';
+    $('productoTop').textContent = '-';
+}
+
+/* ==========  ASIGNAR EVENTOS  ========== */
+$('btnCalcular').addEventListener('click', calcularTotales);
+$('btnLimpiar').addEventListener('click', limpiarPedido);
+
+/* ==========  INICIAR  ========== */
+renderMenu();
+</script>
+</body>
+</html>
