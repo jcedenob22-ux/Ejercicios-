@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicios con Vectores Numericos</title>
+    <style>
+        table td {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <h4>Ejercicio con Vectores</h4>
+    <div>
+        <table>
+            <tbody>
+                <tr>
+                    <td>Dimension del arreglo:</td>
+                    <td>
+                        <select id="select-dimension-arreglo">
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                            <option value="20">20</option>
+                            <option value="25">25</option>
+                            <option value="30">30</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Ingrese valor a buscar:</td>
+                    <td><input type="text" id="id-valor-busqueda" maxlength="4" size="5"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <br>
+    <table id="id-table-vector-numerico" border="1" cellspacing="1" cellpadding="1">
+        <thead>
+            <tr>
+                <td colspan="10">Vector numerico de N elementos</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>0</td>
+                <td>1</td>
+                <td>2</td>
+                <td>3</td>
+                <td>4</td>
+                <td>5</td>
+                <td>6</td>
+                <td>7</td>
+                <td>8</td>
+                <td>9</td>
+            </tr>
+            <tr>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3"><button id="btn-cargar-vector">Cargar Vector</button></td>
+                <td colspan="3"><button id="btn-vaciar-vector">Vaciar Vector</button></td>
+                <td colspan="4">
+                    <input type="number" id="id-posiciones-rotar" value="1" min="1" style="width:50px;">
+                    <select id="id-direccion-rotar">
+                        <option value="derecha">Derecha</option>
+                        <option value="izquierda">Izquierda</option>
+                    </select>
+                    <button id="btn-rotar-vector">Rotar Vector</button>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <input type="number" id="id-posicion1-intercambiar" min="0" placeholder="Primera posición (0-N)">
+                    <input type="number" id="id-posicion2-intercambiar" min="0" placeholder="Segunda posición (0-N)">
+                    <button id="btn-intercambiar-elementos">Intercambiar Elementos</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+    <hr>
+    <table>
+        <thead>
+            <tr>
+                <td colspan="2">Calculos con vectores </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Resultado:</td>
+                <td colspan="2"><input type="text" id="id-txt-respuesta" size="70"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        let vector = [];
+        const NUM_MAXIMO_RANDOM = 50;
+        const tableTbody = document.querySelector('#id-table-vector-numerico > tbody');
+        const btnCargarVector = document.getElementById("btn-cargar-vector");
+        const btnVaciarVector = document.getElementById("btn-vaciar-vector");
+        const txtRespuesta = document.getElementById("id-txt-respuesta");
+        const selectDimension = document.getElementById("select-dimension-arreglo");
+        let TOPE = parseInt(selectDimension.options[selectDimension.selectedIndex].value);
+
+        selectDimension.addEventListener('change', (event) => {
+            TOPE = parseInt(event.target.value);
+            fnVaciarVector();
+            fnPresentarVector();
+        });
+
+        btnCargarVector.addEventListener('click', (event) => {
+            event.preventDefault();
+            fnCargarVector();
+            fnPresentarVector();
+        });
+
+        function fnCargarVector() {
+            vector = [];
+            for (let x = 0; x < TOPE; x++) {
+                const numero = Math.ceil(Math.random() * NUM_MAXIMO_RANDOM);
+                vector[x] = numero;
+            }
+        }
+
+        function fnPresentarVector() {
+            let str = '';
+            str += '<tr>';
+            for (let x = 0; x < TOPE; x++) {
+                str += `<td>${x}</td>`;
+            }
+            str += '</tr>';
+            str += '<tr>';
+            for (let x = 0; x < TOPE; x++) {
+                str += `<td bgcolor="#00FF00">${vector[x] || '-'}</td>`;
+            }
+            str += '</tr>';
+            tableTbody.innerHTML = str;
+        }
+
+        btnVaciarVector.addEventListener('click', (event) => {
+            event.preventDefault();
+            fnVaciarVector();
+            fnPresentarVector();
+        });
+
+        function fnVaciarVector() {
+            vector = [];
+        }
+
+        const btnRotarVector = document.getElementById("btn-rotar-vector");
+        const inputPosiciones = document.getElementById("id-posiciones-rotar");
+        const selectDireccion = document.getElementById("id-direccion-rotar");
+
+        btnRotarVector.addEventListener('click', (event) => {
+            event.preventDefault();
+            const posiciones = parseInt(inputPosiciones.value) || 0;
+            const direccion = selectDireccion.value;
+            fnRotarVector(posiciones, direccion);
+            fnPresentarVector();
+        });
+
+        function fnRotarVector(posiciones, direccion) {
+            const n = vector.length;
+            if (n === 0 || posiciones === 0) return;
+            const p = posiciones % n;
+            if (direccion === "derecha") {
+                const end = vector.splice(n - p, p);
+                vector = end.concat(vector);
+            } else if (direccion === "izquierda") {
+                const start = vector.splice(0, p);
+                vector = vector.concat(start);
+            }
+        }
+
+        const btnIntercambiarElementos = document.getElementById("btn-intercambiar-elementos");
+        const pos1Input = document.getElementById("id-posicion1-intercambiar");
+        const pos2Input = document.getElementById("id-posicion2-intercambiar");
+
+        btnIntercambiarElementos.addEventListener('click', (event) => {
+            event.preventDefault();
+            const pos1 = parseInt(pos1Input.value) || -1;
+            const pos2 = parseInt(pos2Input.value) || -1;
+
+            if (pos1 < 0 || pos1 >= TOPE || pos2 < 0 || pos2 >= TOPE) {
+                txtRespuesta.value = "Error: Posiciones inválidas. Deben estar entre 0 y " + (TOPE - 1);
+                return;
+            }
+
+            if (vector.length === 0) {
+                txtRespuesta.value = "Error: El vector está vacío.";
+                return;
+            }
+
+            const temp = vector[pos1];
+            vector[pos1] = vector[pos2];
+            vector[pos2] = temp;
+            fnPresentarVector();
+            txtRespuesta.value = `Elementos intercambiados en posiciones ${pos1} y ${pos2}: [${vector.join(", ")}]`;
+        });
+    </script>
+</body>
+
+</html>
