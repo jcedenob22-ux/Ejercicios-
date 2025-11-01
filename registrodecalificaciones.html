@@ -1,166 +1,150 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <title>Registro de Calificaciones</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Calificaciones con Estadísticas</title>
 </head>
 <body>
 
-  <h1>Registro de Calificaciones con Estadísticas</h1>
+    <h2>Registro de Calificaciones con Estadísticas</h2>
 
-  <label>Nombre del estudiante:</label><br>
-  <input type="text" id="nombre" autocomplete="off"><br><br>
+    <table border="1">
+        <thead>
+            <tr>
+                <th colspan="4">Registro de Estudiantes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Nombre del estudiante:</td>
+                <td><input type="text" id="id-nombre"></td>
+                <td>Nota (0 - 10):</td>
+                <td><input type="number" id="id-nota" min="0" max="10"></td>
+            </tr>
+            <tr>
+                <td colspan="2"><button id="id-btn-agregar">Agregar</button></td>
+                <td colspan="2"><button id="id-btn-mostrar">Mostrar Datos</button></td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <span id="id-mostrar-lista">No hay datos ingresados.</span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4" align="center">
+                    <button id="id-btn-calcular">Calcular Estadísticas</button>
+                </td>
+            </tr>
+            <tr>
+                <td>Promedio General:</td>
+                <td><span id="id-promedio">0.00</span></td>
+                <td>Nota más alta:</td>
+                <td><span id="id-nota-alta">0.00</span></td>
+            </tr>
+            <tr>
+                <td>Pertenece a:</td>
+                <td><span id="id-mejor-estudiante">---</span></td>
+                <td> Aprobados (≥7):</td>
+                <td><span id="id-aprobados">0%</span></td>
+            </tr>
+        </tbody>
+    </table>
 
-  <label>Nota (0-10):</label><br>
-  <input type="number" id="nota" min="0" max="10" step="0.1"><br><br>
+    <script>
+        // ======= VECTORES PARA GUARDAR DATOS =======
+        const nombres = [];
+        const notas = [];
 
-  <button onclick="agregarEstudiante()">Agregar estudiante</button>
-  <button onclick="calcularEstadisticas()">Calcular estadísticas</button>
-  <button onclick="vaciarLista()">Vaciar lista</button>
+        // ======= REFERENCIAS A LOS ELEMENTOS =======
+        const txtNombre = document.getElementById("id-nombre");
+        const txtNota = document.getElementById("id-nota");
+        const btnAgregar = document.getElementById("id-btn-agregar");
+        const btnMostrar = document.getElementById("id-btn-mostrar");
+        const btnCalcular = document.getElementById("id-btn-calcular");
 
-  <h3>Estudiantes registrados (<span id="contador">0</span>):</h3>
-  <div id="lista"></div>
+        const mostrarLista = document.getElementById("id-mostrar-lista");
+        const mostrarPromedio = document.getElementById("id-promedio");
+        const mostrarNotaAlta = document.getElementById("id-nota-alta");
+        const mostrarMejor = document.getElementById("id-mejor-estudiante");
+        const mostrarAprobados = document.getElementById("id-aprobados");
 
-  <h3>Resultados:</h3>
-  <div id="estadisticas"></div>
+        // ======= AGREGAR ESTUDIANTE =======
+        btnAgregar.addEventListener("click", () => {
+            const nombre = txtNombre.value.trim();
+            const nota = parseFloat(txtNota.value);
 
-  <script>
-    // Arreglos para guardar datos
-    const nombres = [];
-    const notas = [];
+            if (nombre === "" || isNaN(nota)) {
+                alert("Por favor, ingrese el nombre y la nota del estudiante.");
+                return;
+            }
 
-    // Agregar estudiante con validaciones
-    function agregarEstudiante() {
-      const nombreInput = document.getElementById("nombre");
-      const notaInput = document.getElementById("nota");
+            if (nota < 0 || nota > 10) {
+                alert("La nota debe estar entre 0 y 10.");
+                return;
+            }
 
-      const nombre = nombreInput.value.trim();
-      const notaVal = notaInput.value.trim();
+            nombres.push(nombre);
+            notas.push(nota);
 
-      if (nombre === "") {
-        alert("Ingresa el nombre del estudiante.");
-        nombreInput.focus();
-        return;
-      }
+            txtNombre.value = "";
+            txtNota.value = "";
 
-      if (notaVal === "") {
-        alert("Ingresa la nota del estudiante.");
-        notaInput.focus();
-        return;
-      }
+            alert("Estudiante agregado correctamente.");
+        });
 
-      const nota = parseFloat(notaVal);
-      if (isNaN(nota) || nota < 0 || nota > 10) {
-        alert("La nota debe ser un número entre 0 y 10.");
-        notaInput.focus();
-        return;
-      }
+        // ======= MOSTRAR DATOS =======
+        btnMostrar.addEventListener("click", () => {
+            if (nombres.length === 0) {
+                mostrarLista.innerHTML = "No hay datos para mostrar.";
+                return;
+            }
 
-      // Añadir a los arreglos
-      nombres.push(nombre);
-      notas.push(nota);
+            let lista = "";
+            for (let i = 0; i < nombres.length; i++) {
+                lista += (i + 1) + ". " + nombres[i] + " → Nota: " + notas[i] + "<br>";
+            }
+            mostrarLista.innerHTML = lista;
+        });
 
-      // Limpiar campos
-      nombreInput.value = "";
-      notaInput.value = "";
-      nombreInput.focus();
+        // ======= CALCULAR ESTADÍSTICAS =======
+        btnCalcular.addEventListener("click", () => {
+            if (notas.length === 0) {
+                alert("Debe ingresar al menos una nota para calcular estadísticas.");
+                return;
+            }
 
-      mostrarLista();
-    }
+            let suma = 0;
+            let maxNota = notas[0];
+            let indiceMax = 0;
+            let aprobados = 0;
 
-    // Mostrar lista con botones para eliminar o editar 
-    function mostrarLista() {
-      const listaDiv = document.getElementById("lista");
-      listaDiv.innerHTML = "";
+            for (let i = 0; i < notas.length; i++) {
+                suma += notas[i];
 
-      for (let i = 0; i < nombres.length; i++) {
-        // Cada entrada muestra índice, nombre, nota y botones
-        const entry = document.createElement("div");
-        entry.innerHTML =
-          (i + 1) + ". " + nombres[i] + " - Nota: " + notas[i].toFixed(1) +
-          " " +
-          `<button onclick="eliminarEstudiante(${i})">Eliminar</button>` +
-          ` <button onclick="editarEstudiante(${i})">Editar</button>`;
-        listaDiv.appendChild(entry);
-      }
+                if (notas[i] > maxNota) {
+                    maxNota = notas[i];
+                    indiceMax = i;
+                }
 
-      document.getElementById("contador").textContent = nombres.length;
-      // Limpiar resultados mostrados si la lista cambió
-      document.getElementById("estadisticas").innerHTML = "";
-    }
+                if (notas[i] >= 7) {
+                    aprobados++;
+                }
+            }
 
-    // Eliminar estudiante por índice
-    function eliminarEstudiante(index) {
-      if (!confirm("¿Eliminar a " + nombres[index] + " (nota: " + notas[index].toFixed(1) + ")?")) return;
-      nombres.splice(index, 1);
-      notas.splice(index, 1);
-      mostrarLista();
-    }
+            const promedio = suma / notas.length;
+            const porcentajeAprobados = (aprobados / notas.length) * 100;
 
-    // Editar estudiante: rellena los inputs para modificar y elimina la entrada antigua
-    function editarEstudiante(index) {
-      document.getElementById("nombre").value = nombres[index];
-      document.getElementById("nota").value = notas[index];
-      // quitar la entrada antigua para que al "Agregar" se reemplace
-      nombres.splice(index, 1);
-      notas.splice(index, 1);
-      mostrarLista();
-      document.getElementById("nombre").focus();
-    }
-
-    // Vaciar toda la lista
-    function vaciarLista() {
-      if (!confirm("¿Vaciar toda la lista de estudiantes?")) return;
-      nombres.length = 0;
-      notas.length = 0;
-      mostrarLista();
-    }
-
-    // Calcular estadísticas: promedio, nota más alta (y todos los que tengan esa nota), porcentaje aprobados
-    function calcularEstadisticas() {
-      const estadDiv = document.getElementById("estadisticas");
-
-      if (notas.length === 0) {
-        alert("No hay estudiantes registrados.");
-        return;
-      }
-
-      let suma = 0;
-      let mayor = notas[0];
-
-      for (let i = 0; i < notas.length; i++) {
-        suma += notas[i];
-        if (notas[i] > mayor) mayor = notas[i];
-      }
-
-      // Encontrar todos los nombres con la nota mayor (para manejar empates)
-      const nombresMayor = [];
-      for (let i = 0; i < notas.length; i++) {
-        if (Math.abs(notas[i] - mayor) < 1e-9) {
-          nombresMayor.push(nombres[i]);
-        }
-      }
-
-      // Contar aprobados (nota >= 7)
-      let aprobados = 0;
-      for (let i = 0; i < notas.length; i++) {
-        if (notas[i] >= 7) aprobados++;
-      }
-
-      const promedio = suma / notas.length;
-      const porcentaje = (aprobados / notas.length) * 100;
-
-      let texto = "";
-      texto += "Promedio general: " + promedio.toFixed(2) + "<br>";
-      texto += "Nota más alta: " + mayor.toFixed(1) + " (" + nombresMayor.join(", ") + ")<br>";
-      texto += "Aprobados: " + aprobados + " / " + notas.length + " = " + porcentaje.toFixed(2) + "%<br>";
-
-      estadDiv.innerHTML = texto;
-    }
-
-    // Inicializar foco
-    document.getElementById("nombre").focus();
-  </script>
+            mostrarPromedio.innerHTML = promedio.toFixed(2);
+            mostrarNotaAlta.innerHTML = maxNota;
+            mostrarMejor.innerHTML = nombres[indiceMax];
+            mostrarAprobados.innerHTML = porcentajeAprobados.toFixed(2) + "%";
+        });
+    </script>
 
 </body>
 </html>
+
+
+
+  
